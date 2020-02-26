@@ -5,14 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import java.net.ServerSocket;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 talk();
                 break;
             case R.id.ipButton:
-                getIP();
+                goIP();
                 break;
 
 
@@ -47,7 +50,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void getIP(){
-        //TODO: implement the IP grabbing code from the tutorialspoint article linked on d2l
+    public void goIP(){
+        Log.v("**Big**","IP pressed");
+        Intent netTalk = new Intent(this,NetworkActivity.class);
+        try {
+            startActivity(netTalk);
+        }catch(Exception e){
+            Log.v("Scary",e.toString());
+        }
     }
 }
