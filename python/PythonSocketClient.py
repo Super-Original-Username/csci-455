@@ -18,7 +18,7 @@ echoClient =  socket.socket();
 
 # Note: No need for bind() call in client sockets...
 # Just use the socket by calling connect()
-echoClient.connect(("10.200.28.219", 32007));
+echoClient.connect(("10.200.28.219", 8080));
 
 # Send a message
 echoClient.send("Learning Python is fun".encode());
