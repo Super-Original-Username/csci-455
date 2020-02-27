@@ -22,7 +22,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         Button talkButton = (Button)findViewById(R.id.talkMode);
+        Button ipButton = (Button)findViewById(R.id.ipButton);
         talkButton.setOnClickListener(this);
+        ipButton.setOnClickListener(this);
     }
 
     public void onClick(View v){

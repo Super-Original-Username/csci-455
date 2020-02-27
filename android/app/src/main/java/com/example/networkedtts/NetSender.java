@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class NetSender extends Thread {
-
+/*
     NetSender(String ip) {
 
     }
@@ -50,7 +50,7 @@ public class NetSender extends Thread {
             while (true) {
                 try {
                     final String message = input.readLine();
-                    if (message ! = null) {
+                    if (message != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -67,5 +67,5 @@ public class NetSender extends Thread {
                 }
             }
         }
-    }
+    }*/
 }
