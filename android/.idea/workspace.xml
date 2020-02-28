@@ -7,9 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b8e3d6f1-2b9c-4a4e-b45f-00cfc2b6736e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../python/Threading_Doesn'tWork.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/networkedtts/NetSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/networkedtts/NetSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../python/PythonSocketClient.py" beforeDir="false" afterPath="$PROJECT_DIR$/../python/PythonSocketClient.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,7 +25,12 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <projects_view />
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
