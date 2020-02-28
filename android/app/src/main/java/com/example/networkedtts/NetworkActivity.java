@@ -2,15 +2,11 @@ package com.example.networkedtts;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,22 +14,16 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Enumeration;
 
 public class NetworkActivity extends AppCompatActivity implements View.OnClickListener {
     //ServerSocket ss;
@@ -80,11 +70,11 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, servSock.getLocalSocketAddress().toString(), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
         }
-        /*
-        Button locip = (Button) findViewById(R.id.locip_but);
-        Button pcip = (Button) findViewById(R.id.pcip_but);
-        locip.setOnClickListener(this);
-        pcip.setOnClickListener(this);*/
+
+        Button hleft = (Button) findViewById(R.id.hleft_btn);
+        Button hright = (Button) findViewById(R.id.hright_btn);
+        hleft.setOnClickListener(this);
+        hright.setOnClickListener(this);
     }
 
     /*Self- explanatory. Grabs IP, which is mostly just used for the app interface*/
@@ -121,6 +111,7 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
 
     public void onClick(View v) {
         String temp = "unitialized";
+        Thread sn;
         switch (v.getId()) {
             case R.id.on_button:
                 //String oSock = (String) piIP.getText();
@@ -128,6 +119,14 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
                 Thread st = new Thread(new ServThread());
                 st.start();
                 //s.start();
+                break;
+            case R.id.hleft_btn:
+                sn = new Thread(new Sender("hl"));
+                sn.start();
+                break;
+            case R.id.hright_btn:
+                sn = new Thread(new Sender("hr"));
+                sn.start();
                 break;
             /*
             case R.id.locip_but:
@@ -156,15 +155,16 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private class ServThread implements Runnable{
+        //Socket sock;
         public void run(){
             //try{
               //  servSock = new ServerSocket(PORT);
                 //boolean con = false;
                 //while(!con) {
-                    try {
-                        sock = servSock.accept();
-                    }catch(Exception e){e.printStackTrace();}
                 //}
+            try {
+                sock = servSock.accept();
+            }catch(Exception e){e.printStackTrace();}
                 //Toast.makeText(this, sock.getInetAddress() + "connected", Toast.LENGTH_SHORT).show();
                 listen = new Listener(sock);
                 listen.start();
@@ -172,6 +172,11 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
        // }catch(Exception e){
         //        Log.v("big","failed to initialize server socket");}
         }
+
+        void makeSendGo(String s){
+            new Sender(s).start();
+        }
+
     }
 
 
@@ -192,7 +197,7 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
                     newFromClient = inFromClient.readLine();
                     if (!lastFromClient.equals(newFromClient)) {
                         lastFromClient = newFromClient;
-                        msgIn.setText(lastFromClient);
+                        //msgIn.setText(lastFromClient);
                         speak(lastFromClient);
                     }
                 }
@@ -213,9 +218,10 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
         Handler handler;
         DataOutputStream dOut;
         String msg;
+        PrintWriter w;
 
-        Sender(Socket sock, String message) {
-            Socket socket = sock;
+        Sender(String message) {
+            //Socket socket = sock;
             msg = message;
             try {
                 dOut = new DataOutputStream(sock.getOutputStream());
@@ -225,15 +231,21 @@ public class NetworkActivity extends AppCompatActivity implements View.OnClickLi
 
 
         public void run() {
+            try {
+                w = new PrintWriter(sock.getOutputStream(), true);
+            }catch(Exception e){}
+            //writer.write("Hello user 1");
             //Looper.prepare(); // Thread-safe infinite looping function start
             //handler = new Handler(){ //handler. Handles messages from other threads
             //public void handleMessage(Message msg){ //if there is a message from the calling thread, this gets called
             //String response = msg.getData().getString("TT"); //grabs the message from the calling thread
-            try {
-                dOut.writeByte(1);
+
+                msg += "\n";
+                w.write(msg);
+                /*dOut.writeByte(1);
                 dOut.writeUTF(msg); // calls makeTalkDo with the message grabbed in the previous step
-            } catch (IOException e) {
-            }
+                dOut.flush();*/
+
         }
 
             //Looper.loop(); // 'end' of the loop. Signals that the loop must keep on looping

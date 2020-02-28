@@ -39,29 +39,29 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/msg_box"
-        app:layout_constraintVertical_bias="0.347" />
+        app:layout_constraintVertical_bias="0.183" />
 
     <Button
-        android:id="@+id/pcip_but"
+        android:id="@+id/hright_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PC IP"
+        android:text="hright"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.534"
-        app:layout_constraintStart_toEndOf="@+id/locip_but"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toEndOf="@+id/hleft_btn"
         app:layout_constraintTop_toBottomOf="@+id/on_button"
-        app:layout_constraintVertical_bias="0.333" />
+        app:layout_constraintVertical_bias="0.072" />
 
     <Button
-        android:id="@+id/locip_but"
+        android:id="@+id/hleft_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
-        android:text="Local IP"
-        app:layout_constraintBottom_toBottomOf="@+id/pcip_but"
+        android:layout_marginStart="72dp"
+        android:text="hLeft"
+        app:layout_constraintBottom_toBottomOf="@+id/hright_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pcip_but"
+        app:layout_constraintTop_toTopOf="@+id/hright_btn"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
