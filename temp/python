@@ -1,0 +1,44 @@
+#import tkinter as tk
+import _thread
+import time
+#from robomover import KeyController
+import socket
+
+class TCPClient():
+    def __init__(self):
+        pass;
+        
+    def listen(self):
+        #self.oldCommand = self.newCommand;
+        self.command = self.recv(1024);
+        print(self.command);
+
+    def talk(self):
+        self.send("Client connected".encode());
+        
+def __main__():
+
+    client = socket.socket();
+    client.connnect("10.200.28.219", 8080);
+#    client.connect(("10.200.58.97", 8080));
+    #TCPclient = TCPClient(client);
+    time.sleep(5);
+    client.send("Client connected".encode());
+    
+    # New Thread
+    try:
+        _thread.start_new_thread(TCPclient.talk())
+    except:
+        print("Error: unable to send connection confirmation")
+
+    # Continue Thread
+    while(True):
+        try:
+            _thread.start_new_thread(TCPclient.listen());
+        except:
+            print("Error: cannot receive from server");
+        pass
+    #win.mainloop()
+    client.close();
+
+__main__()
