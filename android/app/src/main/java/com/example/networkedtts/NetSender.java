@@ -8,10 +8,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class NetSender extends Thread {
-
-    NetSender(String ip) {
-
-    }
+    public static String SERVER_IP = "";
+    public static final int SERVER_PORT = 8080;
+    NetSender(String ip) {}
         @Override
         public void run() {
             Socket socket;
@@ -44,13 +43,13 @@ public class NetSender extends Thread {
             }
         }
     }
-    private class ListenThread implements Runnable {
+    class ListenThread implements Runnable {
         @Override
         public void run() {
             while (true) {
                 try {
                     final String message = input.readLine();
-                    if (message ! = null) {
+                    if (message != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -58,7 +57,7 @@ public class NetSender extends Thread {
                             }
                         });
                     } else {
-                        Thread1 = new Thread(new Thread1());
+                        Thread Thread1 = new Thread(runOnUiThread);
                         Thread1.start();
                         return;
                     }

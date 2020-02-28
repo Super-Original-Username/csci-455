@@ -21,13 +21,15 @@ echoClient =  socket.socket();
 echoClient.connect(("10.200.28.219", 8080));
 
 # Send a message
-echoClient.send("Learning Python is fun".encode());
+#echoClient.send("Learning Python is fun".encode());
 
-while (True)
+while (True):
     # Get the reply
     msgReceived = echoClient.recv(1024);
 
     # Print the reply
     print("At client: %s"%msgReceived.decode());
+
+    echoClient.send("Client Connected".encode());
 
 echoClient.close();

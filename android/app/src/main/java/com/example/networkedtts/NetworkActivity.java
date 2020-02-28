@@ -109,7 +109,7 @@ public class NetworkActivity extends AppCompatActivity {
             while (true) {
                 try {
                     final String message = input.readLine();
-                    if (message ! = null) {
+                    if (message != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
