@@ -10,31 +10,19 @@
         android:id="@+id/msg_box"
         android:layout_width="190dp"
         android:layout_height="29dp"
-        android:text="0"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.452"
+        app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
-        android:text="PI IP Address"
-        app:layout_constraintEnd_toEndOf="@+id/ip_box"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/ip_box"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/textView5"
         android:layout_width="134dp"
         android:layout_height="20dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="8dp"
         android:text="Incoming Message"
         app:layout_constraintEnd_toEndOf="@+id/msg_box"
         app:layout_constraintHorizontal_bias="0.0"
@@ -48,32 +36,10 @@
         android:text="Enable networking"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/msg_box"
-        app:layout_constraintVertical_bias="0.147" />
-
-    <EditText
-        android:id="@+id/ip_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:text="Enter IP" />
-
-    <Button
-        android:id="@+id/locip_but"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:text="Local IP"
-        app:layout_constraintBottom_toBottomOf="@+id/pcip_but"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pcip_but"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.347" />
 
     <Button
         android:id="@+id/pcip_but"
@@ -82,8 +48,62 @@
         android:text="PC IP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.534"
         app:layout_constraintStart_toEndOf="@+id/locip_but"
         app:layout_constraintTop_toBottomOf="@+id/on_button"
-        app:layout_constraintVertical_bias="0.243" />
+        app:layout_constraintVertical_bias="0.333" />
+
+    <Button
+        android:id="@+id/locip_but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:text="Local IP"
+        app:layout_constraintBottom_toBottomOf="@+id/pcip_but"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/pcip_but"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/ip_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.106"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:text="Enter IP" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="116dp"
+        android:text="PI IP Address"
+        app:layout_constraintEnd_toEndOf="@+id/ip_box"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ip_box"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Local IP"
+        app:layout_constraintEnd_toEndOf="@+id/msg_box"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/msg_box"
+        app:layout_constraintTop_toBottomOf="@+id/msg_box" />
+
+    <TextView
+        android:id="@+id/loc_ip"
+        android:layout_width="191dp"
+        android:layout_height="31dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

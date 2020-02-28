@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v){
-        Toast.makeText(this, "OnClick called", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "OnClick called", Toast.LENGTH_SHORT).show();
         switch (v.getId()){
 
             case R.id.talkMode:
