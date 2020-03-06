@@ -2,7 +2,8 @@ import threading
 import socket
 import tkinter as tk
 
-ADDR = "10.200.52.62"
+#ADDR = "10.200.52.62"
+ADDR = "192.168.0.164"
 PORT = 8080
 
 
