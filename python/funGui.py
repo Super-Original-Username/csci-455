@@ -20,6 +20,7 @@ def on_drag_motion(event):
 
 
 def check_exec_order():
+    return
 
 
 class DragDropMixin:
@@ -32,11 +33,16 @@ class DnDFrame(DragDropMixin, tk.Frame):
     pass
 
 
-main = tk.Tk(width=500,height=500)
+main = tk.Tk()
+main.geometry("500x500")
 
-s = tk.Style()
+#s = tk.Style()
 
-s.configure()
+#s.configure()
+
+frame1 = tk.Frame(main, highlightbackground="green", highlightcolor="green", highlightthickness=1, width=100, height=100, bd= 0)
+frame1.pack()
+frame1.pack_propagate(False)
 
 h_rot_frame = DnDFrame(main, bg="white",cursor="dot",bd=4)
 h_rot_frame.place(x=10, y=10)
@@ -44,7 +50,7 @@ h_rot_frame.place(x=10, y=10)
 hrlabel = tk.Label(h_rot_frame,text="head tilt")
 hrlabel.pack()
 
-h_turn_frame = DnDFrame(main, bg="white",cursor="dot",bd=4)
+h_turn_frame = DnDFrame(main, bg="white",cursor="dot",bd=4, highlightbackground="blue")
 h_turn_frame.place(x=10, y=40)
 
 htlabel = tk.Label(h_turn_frame,text="rotate head")
