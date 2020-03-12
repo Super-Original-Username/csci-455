@@ -39,36 +39,38 @@ class ButtonController():
         self.tango.setTarget(h_tilt, 6000)
 
 
-    def t2():                               # Head Turn
+    def t2():                                   # Head Turn
         self.tango.setTarget(h_turn, 7000)
         self.tango.setTarget(h_turn, 5000)
         self.tango.setTarget(h_turn, 6000)
 
 
-    def t3():                               # Torso Turn
+    def t3():                                   # Torso Turn
         self.tango.setTarget(body, 7000)
         self.tango.setTarget(body, 5000)
         self.tango.setTarget(body, 6000)
 
 
-    def t4():                               # Forward (7000) for 1.5s
+    def t4():                                   # Forward (7000) for 1.5s
         self.tango.setTarget(motors, 7000)
         time.sleep(1.5)
         self.tango.setTarget(motors, 6000)
 
 
-    def t5():                               # Backwards(5000) for 1.5s
+    def t5():                                   # Backwards(5000) for 1.5s
         self.tango.setTarget(motors, 5000)
         time.sleep(1.5)
         self.tango.setTarget(motors, 6000)
 
 
-    def t6():                               # Turn clockwise
-        print(6)
+    def t6():                                   # Turn clockwise
+        self.tango.setTarget(full_turn, 7000)
+        time.sleep(0.1)
 
 
-    def t7():                               # Turn counter-clockwise
-        print(7)
+    def t7():                                   # Turn counter-clockwise
+        self.tango.setTarget(full_turn, 7000)
+        time.sleep(0.1)
 
 
 
