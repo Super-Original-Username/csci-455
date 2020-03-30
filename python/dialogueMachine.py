@@ -1,3 +1,7 @@
+'''This program uses .tangoChat files to generate dynamically-sized dialogue trees. It has a few limitations, as noted below, though can pretty much handle anything
+    you throw at it, so long as they fall within the guidelines of the assigment
+ '''
+
 import sys
 import re   # I decided to go with regexes for building parts of the parser, just to allow a little more line flexibility
 
@@ -11,12 +15,13 @@ comm_reg = r'#.*'   # this regex is just to strip comments out of the input file
 def_reg = r'~'      # regex for definitions
 multiChoice_reg = r'\(\[([a-z\s"]*,?)+\]\)'
 filename_reg = r'.*\.tangoChat' # This is used as part of a couple of checks that the user file input will work
+concept_reg = r'(\(concept\))'
 
 '''
     Note:
-    When writing a tangoChat file, keep in mind that this program generates its list of
-    potential responses for each dialog node by checking the first character after the
-    colon in each line. MAKE SURE THAT THERE MU
+    When writing a tangoChat file, keep in mind that this program tokenizes based off of the ':' character. There MUST
+    be a ':' between each segment of a dialogue line, ie type/level:(user responses):program response
+    If this is not present in your dialogue file, the program WILL NOT function as intended.
 '''
 
 class decision_node:
@@ -55,6 +60,7 @@ class decision_tree:
         self.root_generated = False
         self.cur_parent = self.root
         self.prev_node = self.root
+        self.concept_table = {}
         try:
             convo_file = open(in_filename) 
         except expression as identifier:
@@ -65,12 +71,15 @@ class decision_tree:
         convo_string = convo_file.readlines()
         tokenized_convo = []
         for line in convo_string:
-            line = line.lower() # casts the entire row into lowercase to remove any need for case sensitivity
-            line = line.strip() # cuts off any newlines from the current line
-            line = line.split(':') # splits a line from type:inputs:response into a list of [type, inputs, response]
+            temp_line = []
+            line = line.strip() # cuts off any newlines from the start or end of the current line
+            line = line.split(':',2) # splits a line from type:inputs:response into a list of [type, inputs, response]. Splits only twice, to allow for ':'s in the program response
             for segment in line: 
                 segment = segment.strip(" ") # removes any extra spaces surrounding the current line segment
-            tokenized_convo.append(line)
+            for segment in line[:-1]: # hacky fix, but allows the program's response to retain its original cases
+                temp_line.append(segment.lower()) # casts the entire row into lowercase to remove any need for case sensitivity
+            temp_line.append(line[-1])
+            tokenized_convo.append(temp_line)
         self.process_file(tokenized_convo)
 
 
@@ -138,7 +147,7 @@ class decision_tree:
     def other_converse(self,cur):
         print(cur.resp)
         if len(cur.children) != 0:
-            reply = input()
+            reply = input().lower()
             for child in cur.children:
                 for possible_reply in child.inputs:
                     if reply == possible_reply:
