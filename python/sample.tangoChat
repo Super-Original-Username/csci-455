@@ -1,0 +1,7 @@
+&p:Are you a human?
+u1:([yes,yep,"I think"]):Are you entirely sure?
+u2:(yes):Are you really completely definitely sure?
+u3:(yes):okcool.jpg
+u2:(no):you're probably right
+u1:(no):Prove me wrong
+u2:([beep boop, bop bip, beep, whir]):Ok, I believe you
