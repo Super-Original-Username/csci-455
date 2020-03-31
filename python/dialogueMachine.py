@@ -4,6 +4,7 @@
 
 import sys
 import re   # I decided to go with regexes for building parts of the parser, just to allow a little more line flexibility
+import random
 
 '''
 multiple regexes are designed to do a sort of pseudo (maybe full? I'm a little rusty on the old design patterns) visitor pattern, partially 'tokenizing'
@@ -13,19 +14,24 @@ u_reg = r'^u[0-9]*' # this allows for as many response path children as you coul
 prop_reg = r'&p'    # simple regex for matching the proposal
 comm_reg = r'#.*'   # this regex is just to strip comments out of the input file
 def_reg = r'~'      # regex for definitions
-multiChoice_reg = r'\(\[([a-z\s"]*,?)+\]\)'
+multiChoice_reg = r'\[([a-z\s"\(\)\\]*,?)+\]'
 filename_reg = r'.*\.tangoChat' # This is used as part of a couple of checks that the user file input will work
-concept_reg = r'(\(concept\))'
+concept_reg = r'^\~'
+inline_concept_reg = r'\~[A-z]+'
+parenbracket_reg = r'[\(\[\)\]]'
+
+
 
 '''
     Note:
     When writing a tangoChat file, keep in mind that this program tokenizes based off of the ':' character. There MUST
     be a ':' between each segment of a dialogue line, ie type/level:(user responses):program response
     If this is not present in your dialogue file, the program WILL NOT function as intended.
+    Additionally, concepts MUST have their possible
 '''
 
 class decision_node:
-    def __init__(self,type = None, level = 0, parent_level = -1,parent = None, resp = '', inputs = []):
+    def __init__(self,type = None, level = 0, parent_level = -1,parent = None, resp = ['--{Begin Conversation, Human}--'], inputs = []):
         self.type = type
         self.level = level
         self.parent_level = parent_level # having this allows for a simple form of scoping, using the parent node as a symbol table of sorts
@@ -61,8 +67,13 @@ class decision_tree:
         self.cur_parent = self.root
         self.prev_node = self.root
         self.concept_table = {}
+        self.process_file(in_filename)
+
+
+
+    def process_file(self,filename):
         try:
-            convo_file = open(in_filename) 
+            convo_file = open(filename) 
         except expression as identifier:
             print("--{Yeah, it sure doesn't look like this file exists, chief}--")
             print(identifier)
@@ -76,29 +87,41 @@ class decision_tree:
             line = line.split(':',2) # splits a line from type:inputs:response into a list of [type, inputs, response]. Splits only twice, to allow for ':'s in the program response
             for segment in line: 
                 segment = segment.strip(" ") # removes any extra spaces surrounding the current line segment
-            for segment in line[:-1]: # hacky fix, but allows the program's response to retain its original cases
-                temp_line.append(segment.lower()) # casts the entire row into lowercase to remove any need for case sensitivity
-            temp_line.append(line[-1])
-            tokenized_convo.append(temp_line)
-        self.process_file(tokenized_convo)
+            if re.match(concept_reg,line[0]):
+                self.add_concept(line)
+            else:
+                for segment in line[:-1]: # hacky fix, but allows the program's response to retain its original cases
+                    temp_line.append(segment.lower()) # casts the entire row into lowercase to remove any need for case sensitivity
+                temp_line.append(line[-1])
+                tokenized_convo.append(temp_line)
+        self.process_line(tokenized_convo) # Once most of the raw input file has been processed for use, it gets passed here for parsing
 
 
-    def process_file(self, input_string):
+    def process_line(self, input_string):
         for line in input_string:
+            if line[0] == 'u': # does a small change whenever a 'u' without a number is found, to fit into the code I wrote prior to getting a sample dialogue
+                line[0] = 'u0'
             if not self.root_generated:
                 if not re.match(prop_reg, line[0]):
                     print("--{This isn't a proposal line, checking next}--")
                 else:
                     print("--{Proposal line found, beginning tree generation}--")
                     self.generate_root(line)
-            elif re.match(u_reg,line[0]):
+            if re.match(u_reg,line[0]):
+                if not self.root_generated:
+                    self.root.level= -1
+                    self.root_generated = True
                 # logic to place dialogue options in the correct place in the tree
                 if int(line[0][1]) == self.prev_node.level-1:
                     self.cur_parent = self.cur_parent.parent
                 elif int(line[0][1]) == self.prev_node.level+1:
                     self.cur_parent = self.prev_node
-                self.process_u_node(line,self.cur_parent)
-
+                elif int(line[0][1]) < self.prev_node.level+1:
+                    while int(line[0][1]) < self.prev_node.level+1:
+                        self.prev_node = self.prev_node.parent
+                    self.cur_parent = self.prev_node
+                self.cur_parent.add_child(self.process_u_node(line,self.cur_parent))
+        # if not self.root_generated:
 
 
     '''When the above function comes across any 'level' of 'u', it hops into this function to begin adding a new 
@@ -106,6 +129,7 @@ class decision_tree:
     def process_u_node(self,line,parent_node):
         inputs = []
         resp = line[2]
+        resp = resp.strip()
         level = int(line[0][1])
         temp_inputs = line[1]
         if re.match(multiChoice_reg,line[1]):
@@ -116,10 +140,43 @@ class decision_tree:
             temp_inputs = temp_inputs.strip(" ")
             temp_inputs = temp_inputs.strip('"')
             inputs.append(temp_inputs)
+        if re.match(multiChoice_reg,resp):
+            resp = self.process_multi_word(resp)
         new_option = decision_node(type='u',level = level,parent_level=parent_node.level,parent=parent_node,resp=resp,inputs=inputs)
         self.prev_node = new_option
-        parent_node.add_child(new_option)
+        return new_option
+        # parent_node.add_child(new_option)
 
+
+    # This is perhaps a hacky method, but it splits an input string into individual words, and substrings when denoted with ""
+    def process_multi_word(self, line):
+        split = []
+        in_line = re.sub(parenbracket_reg,'',line)
+        last = 0
+        first_quote_found = False
+        for i in range(len(in_line)):
+            temp = ''
+            if in_line[i] == '"':
+                if not first_quote_found:
+                    first_quote_found = True
+                    last += 1
+                elif first_quote_found:
+                    first_quote_found = False
+                    temp = in_line[last:i]
+                    temp.strip()
+                    temp = re.sub(r'\\','',temp)
+                    if not re.match(r'\s',temp):
+                        split.append(temp)
+                    last = i+1
+            elif not first_quote_found:
+                if re.match(r'\s', in_line[i]):
+                    temp = in_line[last:i]
+                    temp.strip()
+                    temp = re.sub(r'\\','',temp)
+                    if not re.match(r'\s',temp):
+                        split.append(temp)
+                    last = i+1
+        return split
 
     '''This returns a list of possible user replies for the node. Could I have done this in the regular old
         "process_u_node" function? Probably, but I had already written that nasty regex up top, so I didn't want it to go to waste'''
@@ -142,20 +199,60 @@ class decision_tree:
         self.root.resp = line[1]
         self.root_generated = True
 
+
+    # This is used when there are no proposals in the tangochat file
+    def generate_user_root(self,line):
+        user_root = self.process_u_node(line,decision_node(type = 'dummy', level = 0, parent_level = 0,parent = None, resp = '', inputs = []))
+        user_root.parent = None
+        self.root = user_root
+
+    def process_concept_input(self,concept,word):
+        concept_list = self.concept_table[concept]
+        for item in concept_list:
+            if word == item:
+                return True
+        return False
+
+    def pick_concept(self,concept):
+        concept_list = self.concept_table[concept]
+        return random.choice(concept_list)
+
+    def pick_response(self,responses):
+        if isinstance(responses,list):
+            return random.choice(responses)
+        else:
+            return responses
+
     '''This begins the conversation. It is called "other" because there were other methods that 
         I tried before doing this one, and then I was too lazy to change the name after I was done'''
     def other_converse(self,cur):
-        print(cur.resp)
+        in_resp = str(self.pick_response(cur.resp))
+        if re.match(inline_concept_reg, in_resp):
+            concept = re.match(inline_concept_reg, in_resp) #redundant, perhaps, but I just wanted to be as specific as possible here
+            new_word = self.pick_concept(concept.string[1:])
+            in_resp = re.sub(inline_concept_reg,new_word,in_resp)
+        print(in_resp)
         if len(cur.children) != 0:
             reply = input().lower()
             for child in cur.children:
                 for possible_reply in child.inputs:
-                    if reply == possible_reply:
+                    if re.match(inline_concept_reg,possible_reply):
+                        reply_key = re.match(inline_concept_reg,possible_reply)
+                        reply_key = reply_key.string[1:]
+                        for val in self.concept_table[reply_key]:
+                            if reply == val:
+                                self.other_converse(child)
+                                return
+                    elif reply == possible_reply:
                         self.other_converse(child)
                         return
         return
 
-
+    def add_concept(self, concept):
+        #concept = concept.rsplit('')
+        concept_name = re.sub(r'\~','',concept[0])
+        concept_list = self.process_multi_word(concept[1])
+        self.concept_table.update({concept_name:concept_list})
 
     def traverse(self,par):
         par.__str__()
@@ -164,6 +261,11 @@ class decision_tree:
 
     def test_root(self):
         self.root.__str__()
+
+    def print_full_data(self):
+        for key in self.concept_table:
+            print(key+': '+str(self.concept_table[key]))
+        self.traverse(self.root)
 
 
         
@@ -184,6 +286,7 @@ def main():
             convo_tree = decision_tree(toOpen)
             #convo_tree.test_root()
             #convo_tree.traverse(convo_tree.root)
+            #convo_tree.print_full_data()
             convo_tree.other_converse(convo_tree.root)
             print("--{Dialogue complete}--")
         else:
