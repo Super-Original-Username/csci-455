@@ -2,6 +2,8 @@
 #&p : Have you seen a dog around?
 #	u1:(yes) A black dog
 #	u1: (no) Thanks anyway
+#&p: I'm a banana
+#&p: you are a banana
 ~greetings: [hello howdy "hi there"]
 ~responses: [no "of course" "I don't have a nose"]
 u:(boo) : ~greetings

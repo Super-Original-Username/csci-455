@@ -31,7 +31,7 @@ parenbracket_reg = r'[\(\[\)\]]'
 '''
 
 class decision_node:
-    def __init__(self,type = None, level = 0, parent_level = -1,parent = None, resp = ['--{Begin Conversation, Human}--'], inputs = []):
+    def __init__(self,type = None, level = -1, parent_level = -1,parent = None, resp = ['--{Begin Conversation, Human}--'], inputs = []):
         self.type = type
         self.level = level
         self.parent_level = parent_level # having this allows for a simple form of scoping, using the parent node as a symbol table of sorts
@@ -67,6 +67,7 @@ class decision_tree:
         self.cur_parent = self.root
         self.prev_node = self.root
         self.concept_table = {}
+        self.amp_found = False
         self.process_file(in_filename)
 
 
@@ -101,11 +102,14 @@ class decision_tree:
         for line in input_string:
             if line[0] == 'u': # does a small change whenever a 'u' without a number is found, to fit into the code I wrote prior to getting a sample dialogue
                 line[0] = 'u0'
-            if not self.root_generated:
+            if self.amp_found:
+                    raise Exception("--{There is already an & in this text file. Halting execution}--")    
+            elif not self.root_generated:
                 if not re.match(prop_reg, line[0]):
                     print("--{This isn't a proposal line, checking next}--")
                 else:
                     print("--{Proposal line found, beginning tree generation}--")
+                    self.amp_found = True
                     self.generate_root(line)
             if re.match(u_reg,line[0]):
                 if not self.root_generated:
@@ -140,7 +144,7 @@ class decision_tree:
             temp_inputs = temp_inputs.strip(" ")
             temp_inputs = temp_inputs.strip('"')
             inputs.append(temp_inputs)
-        if re.match(multiChoice_reg,resp):
+        if re.match(parenbracket_reg,resp):
             resp = self.process_multi_word(resp)
         new_option = decision_node(type='u',level = level,parent_level=parent_node.level,parent=parent_node,resp=resp,inputs=inputs)
         self.prev_node = new_option
@@ -283,12 +287,15 @@ def main():
     else:
         toOpen = sys.argv[1]
         if re.match(filename_reg, toOpen):
-            convo_tree = decision_tree(toOpen)
-            #convo_tree.test_root()
-            #convo_tree.traverse(convo_tree.root)
-            #convo_tree.print_full_data()
-            convo_tree.other_converse(convo_tree.root)
-            print("--{Dialogue complete}--")
+            try:
+                convo_tree = decision_tree(toOpen)
+                #convo_tree.test_root()
+                #convo_tree.traverse(convo_tree.root)
+                #convo_tree.print_full_data()
+                convo_tree.other_converse(convo_tree.root)
+                print("--{Dialogue complete}--")
+            except Exception as ident:
+                print(ident)
         else:
             print("Your input file does not follow the requirement: *.tangoChat\nPlease try again with the correct filetype")
 
