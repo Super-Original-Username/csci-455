@@ -1,6 +1,11 @@
-'''This program uses .tangoChat files to generate dynamically-sized dialogue trees. It has a few limitations, as noted below, though can pretty much handle anything
+'''
+    This program uses .tangoChat files to generate dynamically-sized dialogue trees. It has a few limitations, as noted below, though can pretty much handle anything
     you throw at it, so long as they fall within the guidelines of the assigment
+
+    For best results, run this program from your command line with the arguments 'python3 dialogueMachine.py inputFile.tangoChat'
  '''
+
+__author__ = "Ethan Fison"
 
 import sys
 import re   # I decided to go with regexes for building parts of the parser, just to allow a little more line flexibility
@@ -14,13 +19,15 @@ u_reg = r'^u[0-9]*' # this allows for as many response path children as you coul
 prop_reg = r'&p'    # simple regex for matching the proposal
 comm_reg = r'#.*'   # this regex is just to strip comments out of the input file
 def_reg = r'~'      # regex for definitions
-multiChoice_reg = r'\[([a-z\s"\(\)\\]*,?)+\]'
+multiChoice_reg = r'(\(\[)([a-z\s"\(\)\\]*,?)+(\]\))' # this particular regex was not a fun troubleshooting experience
 filename_reg = r'.*\.tangoChat' # This is used as part of a couple of checks that the user file input will work
 concept_reg = r'^\~'
 inline_concept_reg = r'\~[A-z]+'
 parenbracket_reg = r'[\(\[\)\]]'
 
+'''Change the filename here if you are unable to use commandline arguments or are getting indexing errors'''
 
+alt_filename = "main.tangoChat"
 
 '''
     Note:
@@ -102,7 +109,7 @@ class decision_tree:
         for line in input_string:
             if line[0] == 'u': # does a small change whenever a 'u' without a number is found, to fit into the code I wrote prior to getting a sample dialogue
                 line[0] = 'u0'
-            if self.amp_found:
+            if self.amp_found and re.match(prop_reg,line[0]):
                     raise Exception("--{There is already an & in this text file. Halting execution}--")    
             elif not self.root_generated:
                 if not re.match(prop_reg, line[0]):
@@ -136,8 +143,9 @@ class decision_tree:
         resp = resp.strip()
         level = int(line[0][1])
         temp_inputs = line[1]
-        if re.match(multiChoice_reg,line[1]):
-            inputs = self.process_multiChoice(line[1])
+        temp_inputs = temp_inputs.strip()
+        if re.match(multiChoice_reg,temp_inputs):
+            inputs = self.process_multi_word(temp_inputs)
         else:
             temp_inputs = re.sub(r'[\(\)]','',temp_inputs) # This is just for a single possible input for the line
             temp_inputs = temp_inputs.strip()
@@ -173,11 +181,14 @@ class decision_tree:
                         split.append(temp)
                     last = i+1
             elif not first_quote_found:
-                if re.match(r'\s', in_line[i]):
-                    temp = in_line[last:i]
+                if re.match(r'\s', in_line[i]) or i == len(in_line)-1:
+                    if i == len(in_line)-1:
+                        temp = in_line[last:]
+                    else:    
+                        temp = in_line[last:i]
                     temp.strip()
                     temp = re.sub(r'\\','',temp)
-                    if not re.match(r'\s',temp):
+                    if not re.match(r'\s',temp) and temp != '': # empty strings aren't considered to be whitespace, so it must be accounted for separately
                         split.append(temp)
                     last = i+1
         return split
@@ -231,6 +242,7 @@ class decision_tree:
         I tried before doing this one, and then I was too lazy to change the name after I was done'''
     def other_converse(self,cur):
         in_resp = str(self.pick_response(cur.resp))
+        #continue_dialogue = True
         if re.match(inline_concept_reg, in_resp):
             concept = re.match(inline_concept_reg, in_resp) #redundant, perhaps, but I just wanted to be as specific as possible here
             new_word = self.pick_concept(concept.string[1:])
@@ -238,6 +250,9 @@ class decision_tree:
         print(in_resp)
         if len(cur.children) != 0:
             reply = input().lower()
+            # if reply == 'end dialogue':
+            #     continue_dialogue = False
+            # else:
             for child in cur.children:
                 for possible_reply in child.inputs:
                     if re.match(inline_concept_reg,possible_reply):
@@ -249,8 +264,9 @@ class decision_tree:
                                 return
                     elif reply == possible_reply:
                         self.other_converse(child)
-                        return
-        return
+                        return #continue_dialogue
+                    
+        return #continue_dialogue
 
     def add_concept(self, concept):
         #concept = concept.rsplit('')
@@ -275,7 +291,7 @@ class decision_tree:
         
 # used to check if there was an input for the filename
 def fileAvailableCheck():
-    if sys.argv[1] is None:
+    if sys.argv[1] == None:
         return False
     else:
         return True
@@ -286,14 +302,19 @@ def main():
         return
     else:
         toOpen = sys.argv[1]
+        #toOpen = alt_filename
         if re.match(filename_reg, toOpen):
             try:
                 convo_tree = decision_tree(toOpen)
                 #convo_tree.test_root()
                 #convo_tree.traverse(convo_tree.root)
-                #convo_tree.print_full_data()
-                convo_tree.other_converse(convo_tree.root)
-                print("--{Dialogue complete}--")
+                # convo_tree.print_full_data()
+                #run_dialogue = True
+                #print('--{Begin Conversation, Human}--')
+                #while run_dialogue:
+                run_dialogue = convo_tree.other_converse(convo_tree.root)
+                print("--{Dialogue complete, halting execution}--")
+                print("--{Please run the program again if you would like to try another dialogue path}--")
             except Exception as ident:
                 print(ident)
         else:
@@ -303,4 +324,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

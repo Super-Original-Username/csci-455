@@ -2,7 +2,7 @@
 #&p : Have you seen a dog around?
 #	u1:(yes) A black dog
 #	u1: (no) Thanks anyway
-#&p: I'm a banana
+&p: I'm a banana
 #&p: you are a banana
 ~greetings: [hello howdy "hi there"]
 ~responses: [no "of course" "I don't have a nose"]
@@ -14,11 +14,14 @@ u: (Do you have any pets): No, do you have any pets?
 	u1: ( Yes): what kind
 		u2: (dog): I love dogs
 			u3:(so): that was rude
+			~potato: [no yes "well of course"]
+				u4:(eggplant):~potato
 				u4:(~greetings): Now you want to be nice
 					u5:(yes): [correct "you are right"]
 					u5: (no): ["I don't want to talk to you anymore" "Are you trying to be funny"]
 						u6:(yes): Good bye
-						u6:(no): See ya
+							u7:(maybe): What does that mean?
+						u6:(no): ~potato
 		u2: (cat): I am allergic
 			u3:(really):~responses
 	u1: ([nope no wrong]): You will die young
