@@ -47,7 +47,7 @@ except: # we don't actually care if a file isn't found, since that probably just
 
 
 
-# get the time step of the current world.
+# get the time step of the current world. (physics frames)
 timestep = 64
 
 
@@ -64,13 +64,18 @@ for i in range(8):
 
 left_motor = robot.getMotor('left wheel motor')
 right_motor = robot.getMotor('right wheel motor')
-compass = robot.getDevice('compass')
-compass.enable()
-t_sense = robot.getDevice('')
 left_motor.setPosition(float('inf'))
 right_motor.setPosition(float('inf'))
 left_motor.setVelocity(0.0)
 right_motor.setVelocity(0.0)
+left_encoder = robot.getPositionSensor('left wheel sensor')
+right_encoder = robot.getPositionsensor('right wheel sensor')
+right_encoder.enable(timestep)
+left_encoder.enable(timestep)
+
+compass = robot.getDevice('compass')
+compass.enable()
+t_sense = robot.getDevice('')
 
 class Walls:
     def __init__(self,in_l,in_f,in_r):
@@ -124,26 +129,45 @@ def make_your_move(in_dir, in_rotation):
 
 
 
-while robot.step(timestep) != -1:
-    # Read the sensors:
-    # Enter here functions to read sensor data, like:
-    #  val = ds.getValue()
-    psValues=[]
-    for i in range(8):
-        psValues.append(ps[i].getValue())
+def incremental_mover(param_list):
+    while robot.step(timestep) != -1:
+        psValues=[]
+        motor_positions = []
+        for i in range(8):
+            psValues.append(ps[i].getValue())
+        left_motor.setVelocity(base_speed)
+        right_motor.setVelocity(-base_speed)
+        motor_positions.append(left_encoder.getValue())
+        motor_positions.append(right_encoder.getValue())
+        for i in motor_positions:
+            print(i)
 
 
-    found_obs = check_walls(psValues)
+
+
+incremental_mover([])
+
+
+# while robot.step(timestep) != -1:
+#     psValues=[]
+#     for i in range(8):
+#         psValues.append(ps[i].getValue())
+    
+    
+
+
+#     # found_obs = check_walls(psValues)
+#     # incremental_mover([found_obs])
 
 
 
 
 
-    # Process sensor data here.
+#     # Process sensor data here.
 
-    # Enter here functions to send actuator commands, like:
-    #  motor.setPosition(10.0)
-    pass
+#     # Enter here functions to send actuator commands, like:
+#     #  motor.setPosition(10.0)
+#     pass
 
 # Enter here exit cleanup code.
 
