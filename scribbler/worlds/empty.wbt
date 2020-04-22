@@ -1,0 +1,172 @@
+#VRML_SIM R2020a utf8
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.7128910083708963 -0.6905152827541581 -0.12237260505060667 5.795878536882118
+  position 1.6410278486709609 0.4126926811397698 1.1126390367055303
+}
+Background {
+  skyColor [
+    0.180392 0.145098 0.113725
+  ]
+}
+DirectionalLight {
+  ambientIntensity 1
+  direction 0.1 -0.5 0.3
+}
+Shape {
+  appearance PBRAppearance {
+    metalness 0
+  }
+  geometry Plane {
+    size 3 1
+  }
+}
+RectangleArena {
+  translation 0 -0.001 0
+  floorSize 3 1
+}
+Robot {
+  translation 1.35 0.0397049 -5.39013e-06
+  rotation 0.00011836985059457079 0.9999999845287935 -0.00013011914267687473 -1.5707997097284185
+  children [
+    Pen {
+      translation 0 -0.04 -0.1
+    }
+    Compass {
+    }
+    DEF BODY Shape {
+      appearance PBRAppearance {
+        baseColor 0.168627 1 0.945098
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.05 0.2
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position -2.566681248864301e-07
+        anchor 0.06 0 0.05
+      }
+      device [
+        RotationalMotor {
+          name "front left motor"
+        }
+      ]
+      endPoint DEF FRONT_LEFT_WHEEL Solid {
+        translation 0.06 7.12397154839804e-24 0.05000000000000003
+        rotation -1.2833359104674639e-07 1.2833406244321367e-07 0.9999999999999838 1.5708000000000157
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.04
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics DEF WHEEL_PH Physics {
+        }
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position -2.3123356569327574e-07
+        anchor -0.06 0 0.05
+      }
+      device [
+        PositionSensor {
+          name "front right encoder"
+        }
+        RotationalMotor {
+          name "front right motor"
+        }
+      ]
+      endPoint DEF FRONT_RIGHT_WHEEL Solid {
+        translation -0.06004686339148968 3.2185227270324275e-05 0.050008542006675843
+        rotation -0.28056401167038164 0.28053537553569724 -0.917923601629497 4.626882437459308
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.04
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position -2.3204933119183917e-07
+        anchor 0.06 0 -0.05
+      }
+      device [
+        RotationalMotor {
+          name "back left motor"
+        }
+      ]
+      endPoint DEF BACK_LEFT_WHEEL Solid {
+        translation 0.05999999999999989 1.6190047967094222e-23 -0.04999999999999995
+        rotation -1.1602423941430868e-07 1.160246655959186e-07 0.9999999999999867 1.5708000000000133
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.04
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 2.581949301451312e-07
+        anchor -0.06 0 -0.05
+      }
+      device [
+        RotationalMotor {
+          name "back right motor"
+        }
+      ]
+      endPoint DEF BACK_RIGHT_WHEEL Solid {
+        translation -0.06005452563297675 2.9771164773856255e-05 -0.049993146390845816
+        rotation 0.4009019704353578 -0.4001669704897339 -0.8241019389797091 4.520169999905577
+        children [
+          DEF WHEEL Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+              metalness 0
+            }
+            geometry Cylinder {
+              height 0.02
+              radius 0.04
+            }
+          }
+        ]
+        boundingObject USE WHEEL
+        physics USE WHEEL_PH
+      }
+    }
+  ]
+  boundingObject USE BODY
+  physics Physics {
+  }
+  controller "<extern>"
+}
